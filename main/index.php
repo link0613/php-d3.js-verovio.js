@@ -341,27 +341,59 @@
             if (mainDt[i][0]==2){/////////////////////////////////////////////////////////////////////////<
                 var mainTag =d3.select('#svg_output svg .page-margin')
                 
-                .append("g")
+                .append("svg")
                     .attr("id",mainDt[i][7])
-                  
+                    .attr("x", x1 - 10000 )
+                    .attr("y", y1 - 10000 )
+                    .attr("width","20000")
+                    .attr("height","20000")     
+
                 mainTag.append("line")
                     .attr("class","line1")
-                    .attr("x1", x1)
-                    .attr("y1", dy/2+y1)
-                    .attr("x2", x2)
-                    .attr("y2", y1)  
+                    .attr("x1", 10000)
+                    .attr("y1", dy/2+10000)
+                    .attr("x2", dx+10000)
+                    .attr("y2", 10000)  
                     .style ("stroke", "rgb(255,0,0)") 
                     .style ("stroke-width", "30");
                 mainTag.append("line")
                     .attr("class","line2")
-                    .attr("x1", x1)
-                    .attr("y1", dy/2+y1)           
-                    .attr("x2", x2)
-                    .attr("y2", y2)  
+                    .attr("x1", 10000)
+                    .attr("y1", dy/2+10000)           
+                    .attr("x2", dx+10000)
+                    .attr("y2", dy+10000)  
                     .style ("stroke", "rgb(255,0,0)") 
                     .style ("stroke-width", "30");
-                addCloseBtn(mainTag,x1,y1);
+                addCloseBtn(mainTag,10000,10000);
                 
+                var drag = d3.behavior.drag()
+                .on("dragstart", function(){
+                    offsetX=0.1
+                })
+                .on("drag", function(){
+                    if (offsetX==0.1){
+                        offsetX=d3.event.x-$(this).attr('x');
+                        offsetY=d3.event.y-$(this).attr('y');
+                    }
+                    d3.select(this)
+                    .attr("x",  d3.event.x - offsetX )
+                    .attr("y",  d3.event.y - offsetY );
+                })
+                .on("dragend", function(e){
+                    tagName = $(this).attr('id');
+                    index=findIndexById(tagName);
+                    if (index>-1){
+                        
+                        mainDt[index][1]=offset;
+                        mainDt[index][2]=svgX-resX ;
+                        mainDt[index][3]=svgY-resY-mainDt[index][5]/2 ;
+                        console.log(mainDt[index]);
+                    }else{
+                        console.log("cant drag");
+                        console.log(tagName);
+                    }
+                });
+                mainTag.call(drag);
             }
 
             if (mainDt[i][0]==3){ ///////////////////////////////////////////////////c
@@ -1362,24 +1394,28 @@
                     svgY0=e.offsetY*svgRate-500;
                     selUid= uniqueId() ;
                     var mainTag =d3.select('#svg_output svg .page-margin')
-                    
-                    .append("g")
+
+                    .append("svg")
                         .attr("id",selUid)
-                      
+                        .attr("x", svgX0-10000 )
+                        .attr("y", svgY0-10000 )
+                        .attr("width","20000")
+                        .attr("height","20000")
+ 
                     mainTag.append("line")
                         .attr("class","line1")
-                        .attr("x1", svgX0)
-                        .attr("y1", svgY0)           
-                        .attr("x2", svgX0+300)
-                        .attr("y2", svgY0-100)  
+                        .attr("x1", 10000)
+                        .attr("y1", 10000)           
+                        .attr("x2", 10000+300)
+                        .attr("y2", 10000-100)  
                         .style ("stroke", "rgb(255,0,0)") 
                         .style ("stroke-width", "30");
                     mainTag.append("line")
                         .attr("class","line2")
-                        .attr("x1", svgX0)
-                        .attr("y1", svgY0)           
-                        .attr("x2", svgX0+300)
-                        .attr("y2", svgY0+100)  
+                        .attr("x1", 10000)
+                        .attr("y1", 10000)           
+                        .attr("x2", 10000+300)
+                        .attr("y2", 10000+100)  
                         .style ("stroke", "rgb(255,0,0)") 
                         .style ("stroke-width", "30");
                     offset0 = offset;
@@ -1401,15 +1437,15 @@
                    dW= svgX1-svgX0; 
  
                 d3.select('#svg_output svg .page-margin #'+selUid +' line.line1')
-                .attr("x2", svgX0+dW )
-                .attr("y2", svgY0+dH )
-                .attr("x1", svgX0)
-                .attr("y1", svgY0+dH/2 );
+                .attr("x2", 10000+dW )
+                .attr("y2", 10000+dH )
+                .attr("x1", 10000)
+                .attr("y1", 10000+dH/2 );
                 d3.select('#svg_output svg .page-margin #'+selUid +' line.line2')
-                .attr("x2", svgX0+dW )
-                .attr("y2", svgY0  )
-                .attr("x1", svgX0)
-                .attr("y1", svgY0+dH/2 );
+                .attr("x2", 10000+dW )
+                .attr("y2", 10000  )
+                .attr("x1", 10000)
+                .attr("y1", 10000+dH/2 );
 
                     
                 }
@@ -1422,8 +1458,7 @@
                 mouseDown= 0 ;
                 getMeiElt(e);
                 console.log("mouseup");
-                //console.log(resX+","+resY);
-                //console.log(parseInt(svgX)+","+parseInt(svgY));
+ 
                 
                 if (selBtn==0) return;
 
@@ -1432,8 +1467,8 @@
  
  
  
-                    var mainTag =d3.select('#svg_output svg .page-margin g#'+selUid);
-                    addCloseBtn(mainTag,svgX0,svgY0);
+                    var mainTag =d3.select('#svg_output svg .page-margin #'+selUid);
+                    addCloseBtn(mainTag,10000,10000);
                     
                     var schm2 = [2,offset0,svgX0-resX0,svgY0-resY0,svgX-svgX0,svgY-svgY0 ,"",selUid];
                     totElt ++;
@@ -1459,15 +1494,13 @@
                     .on("dragend", function(){
                         
                         tagName = $(this).attr('id');
-                        svgX = $(this).attr('x');
-                        svgY =  $(this).attr('y');
-                        
+                         
                         index= findIndexById(tagName);
                         
                         if (index>-1){
                             mainDt[index][1]=offset;
                             mainDt[index][2]=svgX-resX;
-                            mainDt[index][3]=svgY-resY;
+                            mainDt[index][3]=svgY-resY-mainDt[index][5]/2;
                             console.log(mainDt[index]);
                         }
             
