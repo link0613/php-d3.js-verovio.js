@@ -96,6 +96,7 @@
     var mei_data  
     var resX,resY;              
     var offest;
+    var sectWidth;
     var resOffset;
     var minDist;
     var selBtn;
@@ -150,7 +151,7 @@
             .attr("cx",mx)
             .attr("cy",my)
             .attr("r",130)
-            .attr("opacity","0.1")
+            .attr("opacity","0.25")
             .style("cursor","pointer")
             .style("fill","blue");
 
@@ -331,7 +332,17 @@
             
             sectX= parseInt(pos[0].substring(1));
             sectY= parseInt(pos[1]);
-            x1 = sectX + mainDt[i][2];
+            sectX1= parseInt(pos[2].substring(1));
+            sectY1= parseInt(pos[3]);           
+            sectWidth = sectX1 - sectX;
+            
+
+            if (mainDt[i][2]<1){
+                x1 = sectX + sectWidth * mainDt[i][2];
+                console.log("sectWidth",sectWidth);
+            }else{
+                x1 = sectX + mainDt[i][2];
+            }
             y1 = sectY + mainDt[i][3];
             dx = mainDt[i][4];
             dy = mainDt[i][5];
@@ -454,7 +465,7 @@
                     if (index>-1){
                         
                         mainDt[index][1]=offset;
-                        mainDt[index][2]=svgX-resX - offsetX;
+                        mainDt[index][2]=(svgX-resX - offsetX) /sectWidth ;
                         mainDt[index][3]=svgY-resY - offsetY;
                         console.log(mainDt[index]);
                     }else{
@@ -513,9 +524,9 @@
                         index=findIndexById(tagName);
                         if (index>-1){
                             
-                            mainDt[index][1]=offset;
-                            mainDt[index][2]=svgX-resX - offsetX;
-                            mainDt[index][3]=svgY-resY - offsetY;
+                            mainDt[index][1] = offset;
+                            mainDt[index][2] = (svgX-resX - offsetX) /sectWidth ;
+                            mainDt[index][3] = svgY-resY - offsetY;
                             console.log(mainDt[index]);
                         }else{
                             console.log("cant drag");
@@ -1318,24 +1329,30 @@
                     var pos=this.children[4].getAttribute('d').split(' ');
                     var basicID = this.getAttribute('id');
                     sectX= parseInt(pos[0].substring(1));
-                    sectX1= parseInt(pos[3]);
                     sectY= parseInt(pos[1])
+                    sectX1= parseInt(pos[2].substring(1));
+                    sectY1= parseInt(pos[3]);
+                    sectW = sectX1-sectX;
 
                     dist = (svgX*1.0-sectX*1.0)*(svgX*1.0-sectX*1.0)+(svgY*1.0-sectY*1.0)*(svgY*1.0-sectY*1.0);
-
                     
                     if (minDist<0 || dist<minDist){
-                       if (sectY<svgY && svgX > sectX ){ 
+                        if (svgX > sectX ){ 
                             minDist=dist;
-                            resX=sectX;
-                            resY=sectY;
+                            resX = sectX;
+                            resY = sectY;
                             offset = count+(page-1)*stuffs;
-                       }
+                            sectWidth = sectW;
+                        }
                     }
                     count++;
 
                     
                 }); 
+                
+                console.log('offset', offset)
+
+
 
  
             }
@@ -1555,40 +1572,38 @@
                     mainDt.push(schm3);//add element
                     
                     //drag and drop      
+                    // drag and drop
+                    
                     var drag = d3.behavior.drag()
                     .on("dragstart", function(){
-                        offsetX=0.1;
-                        offsetY=0.1;
+                        offsetX=0.1
                     })
                     .on("drag", function(){
-                        
-                        if (offsetY==0.1){
-                            offsetX= d3.event.x- $(this).attr('x') ;
-                            offsetY= d3.event.y- $(this).attr('y') ;
+                        if (offsetX==0.1){
+                            offsetX=d3.event.x-$(this).attr('x');
+                            offsetY=d3.event.y-$(this).attr('y');
                         }
-                            d3.select(this)
-                        .attr("y",  d3.event.y - offsetY )
-                        .attr("x",  d3.event.x - offsetX );
-            
+                        d3.select(this)
+                        .attr("x",  d3.event.x - offsetX )
+                        .attr("y",  d3.event.y - offsetY );
                     })
-                    .on("dragend", function(){
-                        
+                    .on("dragend", function(e){
                         tagName = $(this).attr('id');
-                        svgX = $(this).attr('x');
-                        svgY =  $(this).attr('y');
-                        
-                        index= findIndexById(tagName);
-                        
+                        index=findIndexById(tagName);
                         if (index>-1){
-                            mainDt[index][1]=offset;
-                            mainDt[index][2]=svgX-resX  - offsetX;
-                            mainDt[index][3]=svgY-resY  - offsetY;
+                            
+                            mainDt[index][1] = offset;
+                            mainDt[index][2] = (svgX-resX - offsetX) /sectWidth ;
+                            mainDt[index][3] = svgY-resY - offsetY;
                             console.log(mainDt[index]);
+                        }else{
+                            console.log("cant drag");
+                            console.log(tagName);
                         }
-            
-                    });                 
-                                   
-                    mainTag.call(drag);
+                    });
+                    mainTag.call(drag);     
+                                    
+                            
  
  
                 }
@@ -1656,7 +1671,7 @@
                         
                         if (index>-1){
                             mainDt[index][1]=offset;
-                            mainDt[index][2]=svgX-resX  ;
+                            mainDt[index][2]=(svgX-resX - offsetX) /sectWidth ;
                             mainDt[index][3]=svgY-resY  ;
                             console.log(mainDt[index]);
                         }
