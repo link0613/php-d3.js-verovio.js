@@ -385,9 +385,9 @@
                     if (index>-1){
                         
                         mainDt[index][1]=offset;
-                        mainDt[index][2]=svgX-resX ;
-                        mainDt[index][3]=svgY-resY-mainDt[index][5]/2 ;
-                        console.log(mainDt[index]);
+                        mainDt[index][2]=svgX-resX - (offsetX - 10000);
+                        mainDt[index][3]=svgY-resY - (offsetY - 10000);
+                        console.log(offsetX);
                     }else{
                         console.log("cant drag");
                         console.log(tagName);
@@ -454,8 +454,8 @@
                     if (index>-1){
                         
                         mainDt[index][1]=offset;
-                        mainDt[index][2]=svgX-resX;
-                        mainDt[index][3]=svgY-resY;
+                        mainDt[index][2]=svgX-resX - offsetX;
+                        mainDt[index][3]=svgY-resY - offsetY;
                         console.log(mainDt[index]);
                     }else{
                         console.log("cant drag");
@@ -514,8 +514,8 @@
                         if (index>-1){
                             
                             mainDt[index][1]=offset;
-                            mainDt[index][2]=svgX-resX;
-                            mainDt[index][3]=svgY-resY;
+                            mainDt[index][2]=svgX-resX - offsetX;
+                            mainDt[index][3]=svgY-resY - offsetY;
                             console.log(mainDt[index]);
                         }else{
                             console.log("cant drag");
@@ -1499,8 +1499,8 @@
                         
                         if (index>-1){
                             mainDt[index][1]=offset;
-                            mainDt[index][2]=svgX-resX;
-                            mainDt[index][3]=svgY-resY-mainDt[index][5]/2;
+                            mainDt[index][2]=svgX-resX - (offsetX - 10000);;
+                            mainDt[index][3]=svgY-resY - (offsetX - 10000);;
                             console.log(mainDt[index]);
                         }
             
@@ -1581,8 +1581,8 @@
                         
                         if (index>-1){
                             mainDt[index][1]=offset;
-                            mainDt[index][2]=svgX-resX;
-                            mainDt[index][3]=svgY-resY;
+                            mainDt[index][2]=svgX-resX  - offsetX;
+                            mainDt[index][3]=svgY-resY  - offsetY;
                             console.log(mainDt[index]);
                         }
             
@@ -1656,9 +1656,8 @@
                         
                         if (index>-1){
                             mainDt[index][1]=offset;
-                            mainDt[index][2]=svgX-resX;
-                            mainDt[index][3]=svgY-resY;
-                            
+                            mainDt[index][2]=svgX-resX  ;
+                            mainDt[index][3]=svgY-resY  ;
                             console.log(mainDt[index]);
                         }
 
