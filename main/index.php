@@ -107,7 +107,7 @@
     var count;
     var selUid;
     var mei;
-    
+    var tStaffs;
     
 
     var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
@@ -312,37 +312,32 @@
         });
         svgWidth = $('svg').attr('width'); // $("#svg_output svg").children()[3].viewBox.baseVal.width;
         svgHeight =$('svg').attr('height'); // $("#svg_output svg").children()[3].viewBox.baseVal.height;
+        tStaffs =  ((page == 1)? 0 : $('.mnum tspan')[0].innerHTML * 1 - 1) * $($('.measure')[0]).children('.staff').length;
+
         selBtn=0;
 
         console.log(mainDt );
 
         // customized melody
- 
-        stuffs=$('.measure .staff').length;
-
+ tStaffs
         for (i=0;i<totElt;i++){
             try {  
-                if (page*stuffs<=mainDt[i][1] || (page-1)*stuffs>mainDt[i][1]  ) continue;
-                var pos = $(".measure .staff")[mainDt[i][1]-(page-1)*stuffs].children[4].getAttribute('d').split(' ');
+                stf = Math.floor(mainDt[i][1]/100)-tStaffs;
+                note = mainDt[i][1]%100;
+                if ( stf+1 > $('.staff').length ) continue;
+                sectX = $($(".staff")[stf]).children('.layer').children()[note].children[0].getAttribute('x')*1.0;
+                sectY = $($(".staff")[stf]).children('.layer').children()[note].children[0].getAttribute('y')*1.0;
+                
             }catch(e){
                 continue;
             }
             
             
-            
-            sectX= parseInt(pos[0].substring(1));
-            sectY= parseInt(pos[1]);
-            sectX1= parseInt(pos[2].substring(1));
-            sectY1= parseInt(pos[3]);           
-            sectWidth = sectX1 - sectX;
+ 
             
 
-            if (mainDt[i][2]<1){
-                x1 = sectX + sectWidth * mainDt[i][2];
-                console.log("sectWidth",sectWidth);
-            }else{
-                x1 = sectX + mainDt[i][2];
-            }
+  
+            x1 = sectX + mainDt[i][2];
             y1 = sectY + mainDt[i][3];
             dx = mainDt[i][4];
             dy = mainDt[i][5];
@@ -465,8 +460,8 @@
                     if (index>-1){
                         
                         mainDt[index][1]=offset;
-                        mainDt[index][2]=(svgX-resX - offsetX) /sectWidth ;
-                        mainDt[index][3]=svgY-resY - offsetY;
+                        mainDt[index][2]= svgX-resX - offsetX  ;
+                        mainDt[index][3]= svgY-resY - offsetY;
                         console.log(mainDt[index]);
                     }else{
                         console.log("cant drag");
@@ -525,7 +520,7 @@
                         if (index>-1){
                             
                             mainDt[index][1] = offset;
-                            mainDt[index][2] = (svgX-resX - offsetX) /sectWidth ;
+                            mainDt[index][2] = svgX-resX - offsetX  ;
                             mainDt[index][3] = svgY-resY - offsetY;
                             console.log(mainDt[index]);
                         }else{
@@ -540,7 +535,6 @@
 		console.log("loaded!!!");		
         //$("#save-btn").trigger("click");
         console.log("saved for sync");
-        console.log(mei);
     };
  
     function next_page() {
@@ -1320,31 +1314,29 @@
                 minDist=-100;
 
 
-
-                stuffs=$('.measure .staff').length;
                 count = 0;
                 offset = 0;
-                $('.measure .staff').each(function(){  ///////////////////////////////////////////getting basic pixel
+                //$('#staff-0000000269397575 .layer').children()[0].children[0]
+                $('.staff').each(function(){  ///////////////////////////////////////////getting basic pixel
                     
-                    var pos=this.children[4].getAttribute('d').split(' ');
                     var basicID = this.getAttribute('id');
-                    sectX= parseInt(pos[0].substring(1));
-                    sectY= parseInt(pos[1])
-                    sectX1= parseInt(pos[2].substring(1));
-                    sectY1= parseInt(pos[3]);
-                    sectW = sectX1-sectX;
 
-                    dist = (svgX*1.0-sectX*1.0)*(svgX*1.0-sectX*1.0)+(svgY*1.0-sectY*1.0)*(svgY*1.0-sectY*1.0);
-                    
-                    if (minDist<0 || dist<minDist){
-                        if (svgX > sectX ){ 
+                    var sectNote = $("#" + basicID + " .layer").children();
+                    for (var i = 0; i < sectNote.length; i++ ){
+                        var nX = sectNote[i].children[0].getAttribute('x');
+                        var nY = sectNote[i].children[0].getAttribute('y');
+                        dist = (svgX*1.0-nX*1.0)*(svgX*1.0-nX*1.0)+(svgY*1.0-nY*1.0)*(svgY*1.0-nY*1.0);
+                        
+                        if (minDist<0 || dist<minDist){
                             minDist=dist;
-                            resX = sectX;
-                            resY = sectY;
-                            offset = count+(page-1)*stuffs;
-                            sectWidth = sectW;
+                            resX = nX;
+                            resY = nY;
+                            offset = (count+tStaffs)*100 + i ;
                         }
                     }
+ 
+
+
                     count++;
 
                     
@@ -1593,7 +1585,7 @@
                         if (index>-1){
                             
                             mainDt[index][1] = offset;
-                            mainDt[index][2] = (svgX-resX - offsetX) /sectWidth ;
+                            mainDt[index][2] = svgX-resX - offsetX ;
                             mainDt[index][3] = svgY-resY - offsetY;
                             console.log(mainDt[index]);
                         }else{
@@ -1671,7 +1663,7 @@
                         
                         if (index>-1){
                             mainDt[index][1]=offset;
-                            mainDt[index][2]=(svgX-resX - offsetX) /sectWidth ;
+                            mainDt[index][2]=svgX-resX - offsetX;
                             mainDt[index][3]=svgY-resY  ;
                             console.log(mainDt[index]);
                         }
