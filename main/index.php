@@ -339,38 +339,64 @@
   
             x1 = sectX + mainDt[i][2];
             y1 = sectY + mainDt[i][3];
-            dx = mainDt[i][4];
-            dy = mainDt[i][5];
-            x2 = sectX + mainDt[i][2] + mainDt[i][4];
-            y2 = sectY + mainDt[i][3] + mainDt[i][5];
+
+
 
             if (mainDt[i][0]==2){/////////////////////////////////////////////////////////////////////////<
+                var cut = false;
+                try{
+                    stf1 = Math.floor(mainDt[i][4]/100)-tStaffs;
+                    note1 = mainDt[i][4]%100;
+                    sectX1 = $($(".staff")[stf1]).children('.layer').children()[note1].children[0].getAttribute('x')*1.0;
+                    sectY1 = $($(".staff")[stf1]).children('.layer').children()[note1].children[0].getAttribute('y')*1.0;
+                    x2 = sectX1 + mainDt[i][5]  ;
+                    y2 = sectY1 + mainDt[i][3];
+                    
+                    console.log("DDDD",(stf1-stf)*(x2-x1));
+                    if ( (stf1-stf)*(x2-x1)>0 && Math.abs(y2-y1)<1000 ){
+                        dx = x2-x1;
+                        dy = 200;
+                    }else{
+                         cut = true;
+                    }
+                }catch(e){
+                    cut = true;
+                }
+                if (cut){
+                    if ((stf1-stf)>0){
+                        dx = -x1 + $('svg svg.definition-scale')[0].getAttribute('viewBox').split(" ")[2]*1.0 - 1000;
+                    }else{
+                        dx = -x1;
+                    }
+                    dy =100;
+                }
+
                 var mainTag =d3.select('#svg_output svg .page-margin')
                 
                 .append("svg")
                     .attr("id",mainDt[i][7])
-                    .attr("x", x1 - 10000 )
-                    .attr("y", y1 - 10000 )
-                    .attr("width","20000")
-                    .attr("height","20000")     
+                    .attr("x", x1 - 100000 )
+                    .attr("y", y1 - 100000 )
+                    .attr("width","200000")
+                    .attr("height","200000")     
 
                 mainTag.append("line")
                     .attr("class","line1")
-                    .attr("x1", 10000)
-                    .attr("y1", dy/2+10000)
-                    .attr("x2", dx+10000)
-                    .attr("y2", 10000)  
+                    .attr("x1", 100000)
+                    .attr("y1", 100000)
+                    .attr("x2", 100000+dx)
+                    .attr("y2", 100000-dy)  
                     .style ("stroke", "rgb(255,0,0)") 
                     .style ("stroke-width", "30");
                 mainTag.append("line")
                     .attr("class","line2")
-                    .attr("x1", 10000)
-                    .attr("y1", dy/2+10000)           
-                    .attr("x2", dx+10000)
-                    .attr("y2", dy+10000)  
+                    .attr("x1", 100000)
+                    .attr("y1", 100000)           
+                    .attr("x2", 100000+dx)
+                    .attr("y2", 100000+dy)  
                     .style ("stroke", "rgb(255,0,0)") 
                     .style ("stroke-width", "30");
-                addCloseBtn(mainTag,10000,10000);
+                addCloseBtn(mainTag,100000,100000);
                 
                 var drag = d3.behavior.drag()
                 .on("dragstart", function(){
@@ -391,8 +417,8 @@
                     if (index>-1){
                         
                         mainDt[index][1]=offset;
-                        mainDt[index][2]=svgX-resX - (offsetX - 10000);
-                        mainDt[index][3]=svgY-resY - (offsetY - 10000);
+                        mainDt[index][2]=svgX-resX - (offsetX - 100000);
+                        mainDt[index][3]=svgY-resY - (offsetY - 100000);
                         console.log(offsetX);
                     }else{
                         console.log("cant drag");
@@ -1305,10 +1331,10 @@
             
             totElt = 0  
 
-            function getMeiElt(e){
+            function getMeiElt(eX,eY){
                 svgRate= parseFloat (pageWidth)/parseFloat(svgWidth)*10.0;
-                svgX=e.offsetX*svgRate-500;
-                svgY=e.offsetY*svgRate-500;
+                svgX=eX*svgRate-500;
+                svgY=eY*svgRate-500;
                 fontSize=12*svgRate;
 
                 minDist=-100;
@@ -1394,7 +1420,7 @@
 
             $('#svg_output').mousedown(function(e){
                 mouseDown = 1 ;
-                getMeiElt(e);
+                getMeiElt(e.offsetX,e.offsetY);
                 
                  if (selBtn==0) return;
                  if (selBtn==2){ ///////////////////////////////////////////////////////////// <
@@ -1406,25 +1432,25 @@
 
                     .append("svg")
                         .attr("id",selUid)
-                        .attr("x", svgX0-10000 )
-                        .attr("y", svgY0-10000 )
-                        .attr("width","20000")
-                        .attr("height","20000")
+                        .attr("x", svgX0-100000 )
+                        .attr("y", svgY0-100000 )
+                        .attr("width","200000")
+                        .attr("height","200000")
  
                     mainTag.append("line")
                         .attr("class","line1")
-                        .attr("x1", 10000)
-                        .attr("y1", 10000)           
-                        .attr("x2", 10000+300)
-                        .attr("y2", 10000-100)  
+                        .attr("x1", 100000)
+                        .attr("y1", 100000)           
+                        .attr("x2", 100000+300)
+                        .attr("y2", 100000-100)  
                         .style ("stroke", "rgb(255,0,0)") 
                         .style ("stroke-width", "30");
                     mainTag.append("line")
                         .attr("class","line2")
-                        .attr("x1", 10000)
-                        .attr("y1", 10000)           
-                        .attr("x2", 10000+300)
-                        .attr("y2", 10000+100)  
+                        .attr("x1", 100000)
+                        .attr("y1", 100000)           
+                        .attr("x2", 100000+300)
+                        .attr("y2", 100000+100)  
                         .style ("stroke", "rgb(255,0,0)") 
                         .style ("stroke-width", "30");
                     offset0 = offset;
@@ -1446,15 +1472,15 @@
                    dW= svgX1-svgX0; 
  
                 d3.select('#svg_output svg .page-margin #'+selUid +' line.line1')
-                .attr("x2", 10000+dW )
-                .attr("y2", 10000+dH )
-                .attr("x1", 10000)
-                .attr("y1", 10000+dH/2 );
+                .attr("x2", 100000+dW )
+                .attr("y2", 100000+200 )
+                .attr("x1", 100000)
+                .attr("y1", 100000 );
                 d3.select('#svg_output svg .page-margin #'+selUid +' line.line2')
-                .attr("x2", 10000+dW )
-                .attr("y2", 10000  )
-                .attr("x1", 10000)
-                .attr("y1", 10000+dH/2 );
+                .attr("x2", 100000+dW )
+                .attr("y2", 100000-200  )
+                .attr("x1", 100000)
+                .attr("y1", 100000 );
 
                     
                 }
@@ -1465,7 +1491,7 @@
 
             $('#svg_output').mouseup(function(e){
                 mouseDown= 0 ;
-                getMeiElt(e);
+                getMeiElt(e.offsetX,e.offsetY);
                 console.log("mouseup");
  
                 
@@ -1473,13 +1499,13 @@
 
                 if (selBtn==2){  ////////////////////////////////////////////////////////////////////  <
  
- 
- 
+                    svgRate= parseFloat (pageWidth)/parseFloat(svgWidth)*10.0;
+                    getMeiElt(e.offsetX,(svgY0+500)/svgRate);
  
                     var mainTag =d3.select('#svg_output svg .page-margin #'+selUid);
-                    addCloseBtn(mainTag,10000,10000);
+                    addCloseBtn(mainTag,100000,100000);
                     
-                    var schm2 = [2,offset0,svgX0-resX0,svgY0-resY0,svgX-svgX0,svgY-svgY0 ,"",selUid];
+                    var schm2 = [2,offset0,svgX0-resX0,svgY0-resY0,offset,svgX-resX ,"",selUid];
                     totElt ++;
                     mainDt.push(schm2);//add element
 
@@ -1508,8 +1534,8 @@
                         
                         if (index>-1){
                             mainDt[index][1]=offset;
-                            mainDt[index][2]=svgX-resX - (offsetX - 10000);;
-                            mainDt[index][3]=svgY-resY - (offsetX - 10000);;
+                            mainDt[index][2]=svgX-resX - (offsetX - 100000);;
+                            mainDt[index][3]=svgY-resY - (offsetX - 100000);;
                             console.log(mainDt[index]);
                         }
             
