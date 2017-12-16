@@ -107,8 +107,8 @@
     var count;
     var selUid;
     var mei;
-    var tStaffs;
-    
+    var tStuffs;
+    var vStuffs;
 
     var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
 
@@ -312,17 +312,17 @@
         });
         svgWidth = $('svg').attr('width'); // $("#svg_output svg").children()[3].viewBox.baseVal.width;
         svgHeight =$('svg').attr('height'); // $("#svg_output svg").children()[3].viewBox.baseVal.height;
-        tStaffs =  ((page == 1)? 0 : $('.mnum tspan')[0].innerHTML * 1 - 1) * $($('.measure')[0]).children('.staff').length;
-
+        tStuffs =  ((page == 1)? 0 : $('.mnum tspan')[0].innerHTML * 1 - 1) * $($('.measure')[0]).children('.staff').length;
+        vStuffs = $($('.measure')[0]).children('.staff').length;
         selBtn=0;
 
         console.log(mainDt );
 
         // customized melody
- tStaffs
+
         for (i=0;i<totElt;i++){
             try {  
-                stf = Math.floor(mainDt[i][1]/100)-tStaffs;
+                stf = parseInt(mainDt[i][1]/100)-tStuffs;
                 note = mainDt[i][1]%100;
                 if ( stf+1 > $('.staff').length ) continue;
                 sectX = $($(".staff")[stf]).children('.layer').children()[note].children[0].getAttribute('x')*1.0;
@@ -333,27 +333,29 @@
             }
             
             
- 
-            
 
   
             x1 = sectX + mainDt[i][2];
             y1 = sectY + mainDt[i][3];
 
 
-
+            
             if (mainDt[i][0]==2){/////////////////////////////////////////////////////////////////////////<
                 var cut = false;
+                var secondVisible = true;
                 try{
-                    stf1 = Math.floor(mainDt[i][4]/100)-tStaffs;
+                    stf1 = parseInt(mainDt[i][4]/100)-tStuffs;
                     note1 = mainDt[i][4]%100;
                     sectX1 = $($(".staff")[stf1]).children('.layer').children()[note1].children[0].getAttribute('x')*1.0;
                     sectY1 = $($(".staff")[stf1]).children('.layer').children()[note1].children[0].getAttribute('y')*1.0;
                     x2 = sectX1 + mainDt[i][5]  ;
                     y2 = sectY1 + mainDt[i][3];
                     
-                    console.log("DDDD",(stf1-stf)*(x2-x1));
-                    if ( (stf1-stf)*(x2-x1)>0 && Math.abs(y2-y1)<1000 ){
+                    gy1 = $($('.staff')[stf]).children('path')[0].getAttribute('d').split(' ')[1]; 
+                    gy2 = $($('.staff')[stf1]).children('path')[0].getAttribute('d').split(' ')[1];
+                    
+
+                    if ( (stf1-stf)*(x2-x1)>0 && gy1==gy2 ){
                         dx = x2-x1;
                         dy = 200;
                     }else{
@@ -361,12 +363,16 @@
                     }
                 }catch(e){
                     cut = true;
+                    secondVisible = false;
                 }
-                if (cut){
+                if (cut ){
+                    docW=  $('svg svg.definition-scale')[0].getAttribute('viewBox').split(" ")[2]*1.0 ;
                     if ((stf1-stf)>0){
-                        dx = -x1 + $('svg svg.definition-scale')[0].getAttribute('viewBox').split(" ")[2]*1.0 - 1000;
+                        dx = -x1 + docW - 1000;
+                        dx1 = -x1 + 1000 ;
                     }else{
-                        dx = -x1;
+                        dx = -x1 + 1000;
+                        dx1 = -x1 + docW - 1000;
                     }
                     dy =100;
                 }
@@ -396,6 +402,26 @@
                     .attr("y2", 100000+dy)  
                     .style ("stroke", "rgb(255,0,0)") 
                     .style ("stroke-width", "30");
+
+                if (cut && secondVisible ){
+                    mainTag.append("line")
+                        .attr("class","line1")
+                        .attr("x1", 100000 + (x2-x1))
+                        .attr("y1", 100000 + (gy2-gy1)+dy*2)
+                        .attr("x2", 100000 + dx1)
+                        .attr("y2", 100000 + (gy2-gy1)+dy )  
+                        .style ("stroke", "rgb(255,0,0)") 
+                        .style ("stroke-width", "30");
+                    mainTag.append("line")
+                        .attr("class","line1")
+                        .attr("x1", 100000 + (x2-x1))
+                        .attr("y1", 100000 + (gy2-gy1)-dy*2)
+                        .attr("x2", 100000 + dx1)
+                        .attr("y2", 100000 + (gy2-gy1)-dy )  
+                        .style ("stroke", "rgb(255,0,0)") 
+                        .style ("stroke-width", "30");                        
+                }
+
                 addCloseBtn(mainTag,100000,100000);
                 
                 var drag = d3.behavior.drag()
@@ -1331,7 +1357,7 @@
             
             totElt = 0  
 
-            function getMeiElt(eX,eY){
+            function getMeiElt(eX,eY,offsetOne){
                 svgRate= parseFloat (pageWidth)/parseFloat(svgWidth)*10.0;
                 svgX=eX*svgRate-500;
                 svgY=eY*svgRate-500;
@@ -1339,12 +1365,16 @@
 
                 minDist=-100;
 
+                
 
                 count = 0;
                 offset = 0;
                 //$('#staff-0000000269397575 .layer').children()[0].children[0]
                 $('.staff').each(function(){  ///////////////////////////////////////////getting basic pixel
-                    
+                    if (offsetOne>=0){
+                        if (((count-parseInt(offsetOne*1/100))%vStuffs)!=0) {count++; return;}
+                        console.log("----",vStuffs);
+                    }
                     var basicID = this.getAttribute('id');
 
                     var sectNote = $("#" + basicID + " .layer").children();
@@ -1354,14 +1384,15 @@
                         dist = (svgX*1.0-nX*1.0)*(svgX*1.0-nX*1.0)+(svgY*1.0-nY*1.0)*(svgY*1.0-nY*1.0);
                         
                         if (minDist<0 || dist<minDist){
+                            offset = (count+tStuffs)*100 + i ;
+                            console.log('offsetOne---', offsetOne)
+                            console.log('offset---', offset)
                             minDist=dist;
                             resX = nX;
                             resY = nY;
-                            offset = (count+tStaffs)*100 + i ;
+                            
                         }
                     }
- 
-
 
                     count++;
 
@@ -1420,7 +1451,7 @@
 
             $('#svg_output').mousedown(function(e){
                 mouseDown = 1 ;
-                getMeiElt(e.offsetX,e.offsetY);
+                getMeiElt(e.offsetX,e.offsetY,-1);
                 
                  if (selBtn==0) return;
                  if (selBtn==2){ ///////////////////////////////////////////////////////////// <
@@ -1491,7 +1522,7 @@
 
             $('#svg_output').mouseup(function(e){
                 mouseDown= 0 ;
-                getMeiElt(e.offsetX,e.offsetY);
+                getMeiElt(e.offsetX,e.offsetY,-1);
                 console.log("mouseup");
  
                 
@@ -1500,7 +1531,7 @@
                 if (selBtn==2){  ////////////////////////////////////////////////////////////////////  <
  
                     svgRate= parseFloat (pageWidth)/parseFloat(svgWidth)*10.0;
-                    getMeiElt(e.offsetX,(svgY0+500)/svgRate);
+                    getMeiElt(e.offsetX,(svgY0+500)/svgRate,offset0);
  
                     var mainTag =d3.select('#svg_output svg .page-margin #'+selUid);
                     addCloseBtn(mainTag,100000,100000);
