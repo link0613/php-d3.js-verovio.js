@@ -353,7 +353,6 @@
                     
                     gy1 = $($('.staff')[stf]).children('path')[0].getAttribute('d').split(' ')[1]; 
                     gy2 = $($('.staff')[stf1]).children('path')[0].getAttribute('d').split(' ')[1];
-                    
 
                     if ( (stf1-stf)*(x2-x1)>0 && gy1==gy2 ){
                         dx = x2-x1;
@@ -584,6 +583,68 @@
 
             }
         }
+
+        for (i=0;i<totElt;i++){
+            if (mainDt[i][0]==2){
+                pStaffs =  parseInt($(".staff").length);
+                stf1 = parseInt(mainDt[i][1]/100)-tStuffs;
+                stf2 = parseInt(mainDt[i][4]/100)-tStuffs;
+                console.log (stf1 + "-" + stf2 + pStaffs)
+                if (stf2>0 && stf2<pStaffs){
+
+                    note2 = mainDt[i][4]%100;
+                    try{
+                        sectX2 = $($(".staff")[stf2]).children('.layer').children()[note2].children[0].getAttribute('x')*1.0;
+                        sectY2 = $($('.staff')[stf2]).children('path')[0].getAttribute('d').split(' ')[1]*1.0;
+                    }catch(e){
+                        continue;
+                    }
+                    x2 = sectX2 + mainDt[i][5];
+                    y2 = sectY2 + 400 + mainDt[i][3]/Math.abs(mainDt[i][3])*700;
+                    docW=  $('svg svg.definition-scale')[0].getAttribute('viewBox').split(" ")[2]*1.0 ;
+                    
+                    tail = false;                    
+                    if (stf1<0){
+                        tail = true;
+                        tx = - x2 + 1000;
+                    }
+                    if (stf1>=pStaffs){
+                        tail = true;
+                        tx = - x2 + docW - 1000;
+                    }
+
+                    if (!tail) continue;
+
+                    var mainTag =d3.select('#svg_output svg .page-margin')
+                
+                    .append("svg")
+                        .attr("id",mainDt[i][7]+"tail")
+                        .attr("x", x2 - 100000 )
+                        .attr("y", y2 - 100000 )
+                        .attr("width","200000")
+                        .attr("height","200000")     
+
+                    mainTag.append("line")
+                        .attr("class","line1")
+                        .attr("x1", 100000)
+                        .attr("y1", 100000+200)
+                        .attr("x2", 100000+tx)
+                        .attr("y2", 100000+100)  
+                        .style ("stroke", "rgb(255,0,0)") 
+                        .style ("stroke-width", "30");
+                    mainTag.append("line")
+                        .attr("class","line2")
+                        .attr("x1", 100000)
+                        .attr("y1", 100000-200)           
+                        .attr("x2", 100000+tx)
+                        .attr("y2", 100000-100)  
+                        .style ("stroke", "rgb(255,0,0)") 
+                        .style ("stroke-width", "30");
+
+                }
+            }
+        }
+
 		console.log("loaded!!!");		
         //$("#save-btn").trigger("click");
         console.log("saved for sync");
@@ -1567,6 +1628,8 @@
                             mainDt[index][1]=offset;
                             mainDt[index][2]=svgX-resX - (offsetX - 100000);;
                             mainDt[index][3]=svgY-resY - (offsetX - 100000);;
+
+
                             console.log(mainDt[index]);
                         }
             
