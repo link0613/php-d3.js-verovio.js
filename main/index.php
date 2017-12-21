@@ -325,8 +325,8 @@
                 stf = parseInt(mainDt[i][1]/100)-tStuffs;
                 note = mainDt[i][1]%100;
                 if ( stf+1 > $('.staff').length ) continue;
-                sectX = $($(".staff")[stf]).children('.layer').children()[note].children[0].getAttribute('x')*1.0;
-                sectY = $($(".staff")[stf]).children('.layer').children()[note].children[0].getAttribute('y')*1.0;
+                sectX = $($(".staff")[stf]).children('.layer').find('use')[note].getAttribute('x')*1.0;
+                sectY = $($(".staff")[stf]).children('.layer').find('use')[note].getAttribute('y')*1.0;
                 
             }catch(e){
                 continue;
@@ -346,8 +346,8 @@
                 try{
                     stf1 = parseInt(mainDt[i][4]/100)-tStuffs;
                     note1 = mainDt[i][4]%100;
-                    sectX1 = $($(".staff")[stf1]).children('.layer').children()[note1].children[0].getAttribute('x')*1.0;
-                    sectY1 = $($(".staff")[stf1]).children('.layer').children()[note1].children[0].getAttribute('y')*1.0;
+                    sectX1 = $($(".staff")[stf1]).children('.layer').find('use')[note1].getAttribute('x')*1.0;
+                    sectY1 = $($(".staff")[stf1]).children('.layer').find('use')[note1].getAttribute('y')*1.0;
                     x2 = sectX1 + mainDt[i][5]  ;
                     y2 = sectY1 + mainDt[i][3];
                     
@@ -594,7 +594,7 @@
 
                     note2 = mainDt[i][4]%100;
                     try{
-                        sectX2 = $($(".staff")[stf2]).children('.layer').children()[note2].children[0].getAttribute('x')*1.0;
+                        sectX2 = $($(".staff")[stf2]).find('use')[note2].getAttribute('x')*1.0;
                         sectY2 = $($('.staff')[stf2]).children('path')[0].getAttribute('d').split(' ')[1]*1.0;
                     }catch(e){
                         continue;
@@ -1438,10 +1438,10 @@
                     }
                     var basicID = this.getAttribute('id');
 
-                    var sectNote = $("#" + basicID + " .layer").children();
+                    var sectNote = $("#" + basicID + " .layer").find("use")
                     for (var i = 0; i < sectNote.length; i++ ){
-                        var nX = sectNote[i].children[0].getAttribute('x');
-                        var nY = sectNote[i].children[0].getAttribute('y');
+                        var nX = sectNote[i].getAttribute('x');
+                        var nY = sectNote[i].getAttribute('y');
                         dist = (svgX*1.0-nX*1.0)*(svgX*1.0-nX*1.0)+(svgY*1.0-nY*1.0)*(svgY*1.0-nY*1.0);
                         
                         if (minDist<0 || dist<minDist){
