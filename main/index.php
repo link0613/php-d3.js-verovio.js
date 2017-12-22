@@ -327,7 +327,7 @@
                 if ( stf+1 > $('.staff').length ) continue;
                 sectX = $($(".staff")[stf]).children('.layer').find('use')[note].getAttribute('x')*1.0;
                 sectY = $($(".staff")[stf]).children('.layer').find('use')[note].getAttribute('y')*1.0;
-                
+                baseY = $($('.staff')[stf]).children('path')[0].getAttribute('d').split(' ')[1]*1.0;
             }catch(e){
                 continue;
             }
@@ -347,14 +347,15 @@
                     stf1 = parseInt(mainDt[i][4]/100)-tStuffs;
                     note1 = mainDt[i][4]%100;
                     sectX1 = $($(".staff")[stf1]).children('.layer').find('use')[note1].getAttribute('x')*1.0;
-                    sectY1 = $($(".staff")[stf1]).children('.layer').find('use')[note1].getAttribute('y')*1.0;
+                    //sectY1 = $($(".staff")[stf1]).children('.layer').find('use')[note1].getAttribute('y')*1.0;
+                    sectY1 = $($('.staff')[stf1]).children('path')[0].getAttribute('d').split(' ')[1]*1.0 + baseY - sectY;
                     x2 = sectX1 + mainDt[i][5]  ;
                     y2 = sectY1 + mainDt[i][3];
                     
                     gy1 = $($('.staff')[stf]).children('path')[0].getAttribute('d').split(' ')[1]; 
                     gy2 = $($('.staff')[stf1]).children('path')[0].getAttribute('d').split(' ')[1];
 
-                    if ( (stf1-stf)*(x2-x1)>0 && gy1==gy2 ){
+                    if ( (stf1-stf)*(x2-x1)>=0 && gy1==gy2 ){
                         dx = x2-x1;
                         dy = 200;
                     }else{
@@ -511,8 +512,9 @@
                     if (index>-1){
                         
                         mainDt[index][1]=offset;
-                        mainDt[index][2]= svgX-resX - offsetX  ;
+                        mainDt[index][2]= -400  ;
                         mainDt[index][3]= svgY-resY - offsetY;
+                        $(this).attr('x',resX-400)
                         console.log(mainDt[index]);
                     }else{
                         console.log("cant drag");
@@ -571,8 +573,9 @@
                         if (index>-1){
                             
                             mainDt[index][1] = offset;
-                            mainDt[index][2] = svgX-resX - offsetX  ;
+                            mainDt[index][2] = -50 ;
                             mainDt[index][3] = svgY-resY - offsetY;
+                            $(this).attr('x', resX-50);
                             console.log(mainDt[index]);
                         }else{
                             console.log("cant drag");
@@ -1431,6 +1434,7 @@
                 count = 0;
                 offset = 0;
                 //$('#staff-0000000269397575 .layer').children()[0].children[0]
+                var obj; 
                 $('.staff').each(function(){  ///////////////////////////////////////////getting basic pixel
                     if (offsetOne>=0){
                         if (((count-parseInt(offsetOne*1/100))%vStuffs)!=0) {count++; return;}
@@ -1451,7 +1455,7 @@
                             minDist=dist;
                             resX = nX;
                             resY = nY;
-                            
+                            obj = sectNote[i];
                         }
                     }
 
@@ -1459,8 +1463,12 @@
 
                     
                 }); 
-                
-                console.log('offset', offset)
+
+                $(obj).attr("fill", "#0000ff");
+                setTimeout(() => {
+                    $(obj).attr("fill", "#000000");
+                }, 2000);
+                console.log('offset', obj)
 
 
 
@@ -1517,7 +1525,7 @@
                  if (selBtn==0) return;
                  if (selBtn==2){ ///////////////////////////////////////////////////////////// <
                     svgRate= parseFloat (pageWidth)/parseFloat(svgWidth)*10.0;
-                    svgX0=e.offsetX*svgRate-500;
+                    svgX0=resX;
                     svgY0=e.offsetY*svgRate-500;
                     selUid= uniqueId() ;
                     var mainTag =d3.select('#svg_output svg .page-margin')
@@ -1645,7 +1653,7 @@
                     var mainTag =d3.select('#svg_output svg .page-margin')
                     .append("svg")
                         .attr("id",uid)
-                        .attr("x", svgX-250 )
+                        .attr("x", resX-400 )
                         .attr("y", svgY-250 )
                         .attr("width","7000")
                         .attr("height","7000")
@@ -1678,7 +1686,7 @@
                         });
 
                     addCloseBtn(mainTag,200,200);
-                    var schm3 = [3,offset,svgX-resX-250,svgY-resY-250,0,0,initialTxt,uid];
+                    var schm3 = [3,offset,-400,svgY-resY-250,0,0,initialTxt,uid];
                     
                     totElt ++;
                     mainDt.push(schm3);//add element
@@ -1705,9 +1713,9 @@
                         if (index>-1){
                             
                             mainDt[index][1] = offset;
-                            mainDt[index][2] = svgX-resX - offsetX ;
+                            mainDt[index][2] = -400 ;
                             mainDt[index][3] = svgY-resY - offsetY;
-                            console.log(mainDt[index]);
+                            $(this).attr('x',resX - 400);
                         }else{
                             console.log("cant drag");
                             console.log(tagName);
@@ -1728,7 +1736,8 @@
                     
                     .append("svg")
                         .attr("id",uid )
-                        .attr("x", svgX-250 )
+                        //.attr("x", svgX-250 )
+                        .attr("x", resX-50 )
                         .attr("y", svgY-250 )
                         .attr("width","7000")
                         .attr("height","7000")
@@ -1746,7 +1755,7 @@
 
                     addCloseBtn(mainTag,500,200);
 
-                    var schm1 = [1,offset,svgX-resX-250,svgY-resY-250,0,0,"",uid];
+                    var schm1 = [1,offset,-50,svgY-resY-250,0,0,"",uid];
                     
                     totElt ++;
                     mainDt.push(schm1);//add element
@@ -1771,7 +1780,7 @@
                          d3.select(this)
                         .attr("y",  d3.event.y - offsetY )
                         .attr("x",  d3.event.x - offsetX );
-
+                        
                     })
                     .on("dragend", function(){
                         
@@ -1783,9 +1792,11 @@
                         
                         if (index>-1){
                             mainDt[index][1]=offset;
-                            mainDt[index][2]=svgX-resX - offsetX;
+                            mainDt[index][2]= - 50;
                             mainDt[index][3]=svgY-resY  ;
-                            console.log(mainDt[index]);
+                            $(this).attr('x', resX-50);
+                            
+                            
                         }
 
                     });
