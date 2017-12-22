@@ -585,6 +585,65 @@
                     mainTag.call(drag);
 
             }
+            if (mainDt[i][0]==4){ ///////////////////////////////////////////////////pppp
+                // console.log(mainDt[i]);
+                var mainTag =d3.select('#svg_output svg .page-margin')
+               
+                .append("svg")
+                   .attr("id",mainDt[i][7])
+                   .attr("x", x1 )
+                   .attr("y", y1 )
+                   .attr("width","7000")
+                   .attr("height","7000")
+                   
+                mainTag.append("text")
+                   .attr("font-size", 500)
+                   .attr("x", 125 )
+                   .attr("y", 500 )
+                   .style("fill", "red")
+                   .style("font-style","italic")
+                   .style("cursor","pointer")
+                   .style("font-weight","bolder")
+                   .text("pppp")
+  
+                addCloseBtn(mainTag,1200,200);
+
+                 
+
+
+                // drag and drop
+                
+                var drag = d3.behavior.drag()
+                    .on("dragstart", function(){
+                        offsetX=0.1
+                    })
+                    .on("drag", function(){
+                        if (offsetX==0.1){
+                            offsetX=d3.event.x-$(this).attr('x');
+                            offsetY=d3.event.y-$(this).attr('y');
+                        }
+                        d3.select(this)
+                        .attr("x",  d3.event.x - offsetX )
+                        .attr("y",  d3.event.y - offsetY );
+                    })
+                    .on("dragend", function(e){
+                        tagName = $(this).attr('id');
+                        index=findIndexById(tagName);
+                        if (index>-1){
+                            
+                            mainDt[index][1] = offset;
+                            mainDt[index][2] = -50 ;
+                            mainDt[index][3] = svgY-resY - offsetY;
+                            $(this).attr('x', resX-50);
+                            console.log(mainDt[index]);
+                        }else{
+                            console.log("cant drag");
+                            console.log(tagName);
+                        }
+                    });
+                    mainTag.call(drag);
+
+            }
         }
 
         for (i=0;i<totElt;i++){
@@ -1100,13 +1159,16 @@
 							<input type="radio" name="options" id="tool0" autocomplete="off" checked> +
 							</label>
 							<label class="btn btn-primary btn-tools">
-							<input type="radio" name="options" id="tool1" autocomplete="off"> P
+							<input type="radio" name="options" id="tool1" autocomplete="off"> p
 							</label>
-							<label class="btn btn-primary btn-tools">
+                            <label class="btn btn-primary btn-tools">
 							<input type="radio" name="options" id="tool2" autocomplete="off"> <
 							</label>
 							<label class="btn btn-primary btn-tools">
 							<input type="radio" name="options" id="tool3" autocomplete="off"> C
+							</label>
+                            <label class="btn btn-primary btn-tools">
+							<input type="radio" name="options" id="tool4" autocomplete="off"> pppp
 							</label>
 					 	</div>
 
@@ -1805,7 +1867,82 @@
                     
                 }
 
+                if (selBtn==4){  ////////////////////////////////////////////////////////////////////  Pppp
+                    
+                    uid= uniqueId();
 
+                    var mainTag =d3.select('#svg_output svg .page-margin')
+                    
+                    .append("svg")
+                        .attr("id",uid )
+                        //.attr("x", svgX-250 )
+                        .attr("x", resX-50 )
+                        .attr("y", svgY-250 )
+                        .attr("width","7000")
+                        .attr("height","7000")
+                        
+                    mainTag.append("text")
+                        .attr("font-size", 500)
+                        .attr("x", 125 )
+                        .attr("y", 500 )
+                        .style("fill", "red")
+                        .style("font-style","italic")
+                        .style("cursor","pointer")
+                        .style("font-weight","bolder")
+                        .text("pppp")
+                         
+
+                    addCloseBtn(mainTag,1200,200);
+
+                    var schm1 = [4,offset,-50,svgY-resY-250,0,0,"",uid];
+                    
+                    totElt ++;
+                    mainDt.push(schm1);//add element
+
+                    console.log(mainDt);
+
+
+
+
+                    //drag and drop                     
+                    var drag = d3.behavior.drag()
+                    .on("dragstart", function(){
+                        offsetX=0.1;
+                        offsetY=0.1;
+                    })
+                    .on("drag", function(){
+                        
+                        if (offsetY==0.1){
+                            offsetX= d3.event.x- $(this).attr('x') ;
+                            offsetY= d3.event.y- $(this).attr('y') ;
+                        }
+                         d3.select(this)
+                        .attr("y",  d3.event.y - offsetY )
+                        .attr("x",  d3.event.x - offsetX );
+                        
+                    })
+                    .on("dragend", function(){
+                        
+                        tagName = $(this).attr('id');
+                        svgX = $(this).attr('x');
+                        svgY =  $(this).attr('y');
+                      
+                        index= findIndexById(tagName);
+                        
+                        if (index>-1){
+                            mainDt[index][1]=offset;
+                            mainDt[index][2]= - 50;
+                            mainDt[index][3]=svgY-resY  ;
+                            $(this).attr('x', resX-50);
+                            
+                            
+                        }
+
+                    });
+                    
+                    mainTag.call(drag);
+                    
+                }
 
                 
                 $("#tool0").trigger("click");
