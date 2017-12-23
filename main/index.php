@@ -495,7 +495,8 @@
                 
                 var drag = d3.behavior.drag()
                 .on("dragstart", function(){
-                    offsetX=0.1
+                    offsetX=400
+                    offsetY=50
                 })
                 .on("drag", function(){
                     if (offsetX==0.1){
@@ -556,7 +557,8 @@
                 
                 var drag = d3.behavior.drag()
                     .on("dragstart", function(){
-                        offsetX=0.1
+                        offsetX=50
+                        offsetY=50
                     })
                     .on("drag", function(){
                         if (offsetX==0.1){
@@ -615,7 +617,8 @@
                 
                 var drag = d3.behavior.drag()
                     .on("dragstart", function(){
-                        offsetX=0.1
+                        offsetX=50
+                        offsetY=50
                     })
                     .on("drag", function(){
                         if (offsetX==0.1){
@@ -1503,12 +1506,15 @@
                         console.log("----",vStuffs);
                     }
                     var basicID = this.getAttribute('id');
+                    basicY= $($('#'+ basicID).children()[2]).attr('d').split(' ')[1];
+                    
+                    
 
                     var sectNote = $("#" + basicID + " .layer").find("use")
                     for (var i = 0; i < sectNote.length; i++ ){
                         var nX = sectNote[i].getAttribute('x');
                         var nY = sectNote[i].getAttribute('y');
-                        dist = (svgX*1.0-nX*1.0)*(svgX*1.0-nX*1.0)+(svgY*1.0-nY*1.0)*(svgY*1.0-nY*1.0);
+                        dist = (svgX*1.0-nX*1.0)*(svgX*1.0-nX*1.0)+(svgY*1.0-nY*0.3-basicY*0.7 )*(svgY*1.0-nY*0.3-basicY*0.7 );
                         
                         if (minDist<0 || dist<minDist){
                             offset = (count+tStuffs)*100 + i ;
@@ -1520,7 +1526,7 @@
                             obj = sectNote[i];
                         }
                     }
-
+                    console.log (resY)
                     count++;
 
                     
@@ -1758,7 +1764,8 @@
                     
                     var drag = d3.behavior.drag()
                     .on("dragstart", function(){
-                        offsetX=0.1
+                        offsetX=400
+                        offsetY=50
                     })
                     .on("drag", function(){
                         if (offsetX==0.1){
@@ -1830,8 +1837,8 @@
                     //drag and drop                     
                     var drag = d3.behavior.drag()
                     .on("dragstart", function(){
-                        offsetX=0.1;
-                        offsetY=0.1;
+                        offsetX=50;
+                        offsetY=50;
                     })
                     .on("drag", function(){
                         
@@ -1857,6 +1864,7 @@
                             mainDt[index][2]= - 50;
                             mainDt[index][3]=svgY-resY  ;
                             $(this).attr('x', resX-50);
+                            
                             
                             
                         }
@@ -1907,8 +1915,8 @@
                     //drag and drop                     
                     var drag = d3.behavior.drag()
                     .on("dragstart", function(){
-                        offsetX=0.1;
-                        offsetY=0.1;
+                        offsetX=50;
+                        offsetY=50;
                     })
                     .on("drag", function(){
                         
