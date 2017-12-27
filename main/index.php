@@ -1514,7 +1514,7 @@
                     for (var i = 0; i < sectNote.length; i++ ){
                         var nX = sectNote[i].getAttribute('x');
                         var nY = sectNote[i].getAttribute('y');
-                        dist = (svgX*1.0-nX*1.0)*(svgX*1.0-nX*1.0)+(svgY*1.0-nY*0.3-basicY*0.7 )*(svgY*1.0-nY*0.3-basicY*0.7 );
+                        dist = (svgX*1.0-nX*1.0)*(svgX*1.0-nX*1.0)+(svgY*1.0-nY*0.1-basicY*0.9 )*(svgY*1.0-nY*0.1-basicY*0.9 );
                         
                         if (minDist<0 || dist<minDist){
                             offset = (count+tStuffs)*100 + i ;
